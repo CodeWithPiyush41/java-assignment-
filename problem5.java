@@ -1,85 +1,97 @@
-/*
-Problem 5: Employee Salary Management System
-Problem Statement:-
-Write a Java program that accepts details of N employees (using arrays): 
-Employee ID
-Employee Name
-Basic Salary
-Calculate:
-DA = 40% of Basic Salary
-HRA = 20% of Basic Salary
-PF = 12% of Basic Salary
-Gross Salary = Basic + DA + HRA
-Net Salary = Gross Salary - PF
-Display all employee details in a tabular format and also display:
-Highest Paid Employee
-Lowest Paid Employee
-Average Salary of all employees
-*/
+
+
 import java.io.*;
-class Employee{
-int empid,bsal=0;
-double DA,PF,HRA,Gsal,Nsal;
-String name;
-BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-void read()throws IOException {
-System.out.print("Enter Your Emlpoyee Id :");
-empid=Integer.parseInt(br.readLine());
-System.out.print("Enter Your Name :");
-name=br.readLine();
-System.out.print("Enter your base salary :" );
-bsal=Integer.parseInt(br.readLine());
-DA=bsal*0.04;    //bsal=Base salary
-PF=bsal*0.12;
-HRA=bsal*0.2;
-Gsal=bsal+DA+HRA;   //Gsal=Gross Salary
-Nsal=Gsal-PF;   // Net Salary
+
+class Employee {
+    int empid;
+    double bsal;
+    double DA, HRA, PF, Gsal, Nsal;
+    String name;
+    
+    void read(BufferedReader br, int index) throws IOException {
+        System.out.println("\n--- Entering Details for Employee " + (index + 1) + " ---");
+        System.out.print("Enter Employee ID: ");
+        empid = Integer.parseInt(br.readLine());
+        
+        System.out.print("Enter Employee Name: ");
+        name = br.readLine();
+        
+        System.out.print("Enter Basic Salary: ");
+        bsal = Double.parseDouble(br.readLine());
+        
+        
+        DA = bsal * 0.40;  
+        HRA = bsal * 0.20;  
+        PF = bsal * 0.12;   
+        Gsal = bsal + DA + HRA; 
+        Nsal = Gsal - PF;     
+    }
+    
+    void showRow() {
+        System.out.printf("%-8d %-15s %-12.2f %-10.2f %-10.2f %-10.2f %-12.2f %-12.2f\n",
+                empid, name, bsal, DA, HRA, PF, Gsal, Nsal);
+    }
 }
-void show(){
-System.out.println(empid+"\t"+name+"\t"+bsal+"\t\t"+DA+"\t"+PF+"\t"+HRA+"\t"+Gsal+"\t"+Nsal);
+
+class Problem5 {
+    public static void main(String arr[]) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        System.out.print("Number of records to enter? : ");
+        int n = Integer.parseInt(br.readLine());
+        
+        if (n <= 0) {
+            System.out.println("Invalid number of records!");
+            return;
+        }
+        
+        Employee e[] = new Employee[n];
+        for (int i = 0; i < n; i++) {
+            e[i] = new Employee();
+            e[i].read(br, i);
+        }
+        
+        System.out.println("\n=========================================================================================================");
+        System.out.printf("%-8s %-15s %-12s %-10s %-10s %-10s %-12s %-12s\n",
+                "ID", "Name", "Basic Sal", "DA (40%)", "HRA (20%)", "PF (12%)", "Gross Sal", "Net Sal");
+        System.out.println("=========================================================================================================");
+        
+        for (int i = 0; i < n; i++) {
+            e[i].showRow();
+        }
+        System.out.println("=========================================================================================================");
+        
+        if (n == 1) {
+            System.out.println("\nOnly one employee record entered:");
+            System.out.printf("Highest, Lowest, and Average Basic Salary: ₹%.2f\n", e[0].bsal);
+        } else {
+            double maxS = e[0].bsal;
+            double minS = e[0].bsal;
+            int maxI = 0;
+            int minI = 0;
+            double totalBsal = 0;
+            
+            for (int i = 0; i < n; i++) {
+                if (e[i].bsal > maxS) {
+                    maxS = e[i].bsal;
+                    maxI = i;
+                }
+                if (e[i].bsal < minS) {
+                    minS = e[i].bsal;
+                    minI = i;
+                }
+                totalBsal += e[i].bsal;
+            }
+            
+            double avg = totalBsal / n;
+            
+            System.out.println("\n--- Salary Summary Statistics ---");
+            System.out.printf("Highest Paid Employee: ID=%d, Name=%s, Basic Salary=₹%.2f, Net Salary=₹%.2f\n",
+                    e[maxI].empid, e[maxI].name, e[maxI].bsal, e[maxI].Nsal);
+            System.out.printf("Lowest Paid Employee : ID=%d, Name=%s, Basic Salary=₹%.2f, Net Salary=₹%.2f\n",
+                    e[minI].empid, e[minI].name, e[minI].bsal, e[minI].Nsal);
+            System.out.printf("Average Basic Salary of All Employees: ₹%.2f\n", avg);
+        }
+    }
 }
-}
-class Main{
-public static void main(String arr[])throws IOException{
-BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-System.out.print("Nmber of records? :");
-int n=Integer.parseInt(br.readLine());
-Employee e[]=new Employee[n];
-for(int i=0;i<n;i++){
-e[i]=new Employee();
-e[i].read();
-}
-System.out.println("\n");
-System.out.println("Id\tName\tBase Salary\tDA\tPF\tHRA\tGs\tNs" );
-for(int i=0;i<n;i++){
-e[i].show();
-}
-if(n==1){
-System.out.println("\nSince Only one Employee therefore Highest,Lowest and Average Salary is equal to Base Salary:");	
-}
-else{ 
-double maxS=e[1].bsal,avg=0;
-double minS=e[1].bsal;
-int maxI=1,minI=1;
-for(int i=0;i<n;i++){
-if(e[i].bsal>maxS){
-maxS=e[i].bsal;
-maxI=i;
-}
-avg=avg+e[i].bsal;
-if(e[i].bsal<minS){
-minS=e[i].bsal;
-minI=i;
-}
-}
-avg=avg/n;
-System.out.println("Highest  paid Employee :");
-System.out.println("Id\tName\tBase Salary");
-System.out.println(e[maxI].empid+"\t"+e[maxI].name+"\t"+e[maxI].bsal);
-System.out.println("Lowest paid Employee :");
-System.out.println("Id\tName\tBase Salary");
-System.out.println(e[minI].empid+"\t"+e[minI].name+"\t"+e[minI].bsal);
-System.out.println("Average Salary of all Employees is :"+avg);
-}
-}
-}
+
